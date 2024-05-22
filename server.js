@@ -41,7 +41,7 @@ const fieldLabels = {
   monthsToEvaluate: "Months to Evaluate",
   associatedCost: "Associated Cost",
   otherExpenses: "Other Expenses",
-  // savingsGoal: "Monthly Savings/Investment",
+  monthlySavings: "Monthly Savings/Investment",
 };
 
 // POST endpoint to handle validation
@@ -57,7 +57,7 @@ app.post("/validate", (req, res) => {
     savings,
     monthsToEvaluate,
     otherExpenses,
-    // savingsGoal,
+    monthlySavings,
   } = req.body;
 
   // Validate costs
@@ -102,9 +102,9 @@ app.post("/validate", (req, res) => {
       .json({ error: "Invalid other expenses amount provided." });
   }
 
-  // if (!savingsGoal || savingsGoal < 0) {
-  //   return res.status(400).json({ error: "Invalid savings goal provided." });
-  // }
+  if (!monthlySavings || monthlySavings < 0) {
+    return res.status(400).json({ error: "Invalid monthly savings provided." });
+  }
 
   const parameters = {
     movingCost,
@@ -117,7 +117,7 @@ app.post("/validate", (req, res) => {
     savings,
     monthsToEvaluate,
     otherExpenses,
-    // savingsGoal,
+    monthlySavings,
   };
 
   // Check each parameter for numeric validity
@@ -141,13 +141,17 @@ app.post("/validate", (req, res) => {
   const numMonthsToEvaluate = parseInt(monthsToEvaluate, 10);
   const numAssociatedCost = parseInt(associatedCost);
   const numOtherExpenses = parseInt(otherExpenses);
-  // const numSavingsGoal = parseInt(savingsGoal);
+  const numMonthlySavings = parseInt(monthlySavings);
 
   try {
     // Perform calculations
-    const initialCosts =
-      numMovingCost + numImmediateCost + numSecurityDeposit + numAssociatedCost;
-    const totalMonthlyCost = numRent + numUtilities + numOtherExpenses;
+    const initialCosts = numMovingCost + numImmediateCost + numSecurityDeposit;
+    const totalMonthlyCost =
+      numRent +
+      numUtilities +
+      numOtherExpenses +
+      numMonthlySavings +
+      numAssociatedCost;
     const totalCostOverTime =
       initialCosts + totalMonthlyCost * numMonthsToEvaluate;
     const affordabilityDuration = Math.floor(
