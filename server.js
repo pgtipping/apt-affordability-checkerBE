@@ -31,93 +31,68 @@ function isNumeric(value) {
 }
 
 const fieldLabels = {
-  movingCost: "Moving Cost",
+  movingAndSetupCost: "Moving & Setup Costs",
+  monthlyLivingCost: "Monthly Living Costs",
   rent: "Monthly Rent",
-  utilities: "Utilities",
-  immediateCost: "Immediate Cost",
   securityDeposit: "Security Deposit",
-  netIncome: "Net Income",
-  savings: "Total Savings",
+  totalMonthlyIncome: "Total Monthly Income",
+  totalSavings: "Total Savings",
   monthsToEvaluate: "Months to Evaluate",
-  associatedCost: "Associated Cost",
-  otherExpenses: "Other Expenses",
-  monthlySavings: "Monthly Savings/Investment",
 };
 
 // POST endpoint to handle validation
 app.post("/validate", (req, res) => {
   const {
-    movingCost,
-    immediateCost,
+    movingAndSetupCost,
+    monthlyLivingCost,
     rent,
     securityDeposit,
-    utilities,
-    associatedCost,
-    netIncome,
-    savings,
+    totalMonthlyIncome,
+    totalSavings,
     monthsToEvaluate,
-    otherExpenses,
-    monthlySavings,
   } = req.body;
 
   // Validate costs
-  if (!movingCost || movingCost < 0) {
-    return res.status(400).json({ error: "Invalid moving cost provided." });
+  if (!movingAndSetupCost || movingAndSetupCost < 0) {
+    return res
+      .status(400)
+      .json({ error: "Invalid moving and setup costs provided." });
+  }
+  if (!monthlyLivingCost || monthlyLivingCost < 0) {
+    return res
+      .status(400)
+      .json({ error: "Invalid monthly living costs provided." });
   }
   if (!rent || rent <= 0) {
     return res.status(400).json({ error: "Invalid rent provided." });
   }
-  if (!utilities || utilities <= 0) {
-    return res.status(400).json({ error: "Invalid utilities cost provided." });
-  }
-  if (!immediateCost || immediateCost < 0) {
-    return res.status(400).json({ error: "Invalid immediate cost provided." });
-  }
   if (!monthsToEvaluate || monthsToEvaluate < 1 || monthsToEvaluate > 60) {
     return res
       .status(400)
-      .json({ error: "Months To Evaluate must be between 1 and 12." });
+      .json({ error: "Months To Evaluate must be between 1 and 60." });
   }
   if (!securityDeposit || securityDeposit < 0) {
     return res
       .status(400)
       .json({ error: "Invalid security deposit provided." });
   }
-
-  if (!associatedCost || associatedCost < 0) {
-    return res.status(400).json({ error: "Invalid associated cost provided." });
-  }
-
-  if (!netIncome || netIncome <= 0) {
-    return res.status(400).json({ error: "Invalid net income provided." });
-  }
-
-  if (!savings || savings < 0) {
-    return res.status(400).json({ error: "Invalid savings amount provided." });
-  }
-
-  if (!otherExpenses || otherExpenses <= 0) {
+  if (!totalMonthlyIncome || totalMonthlyIncome <= 0) {
     return res
       .status(400)
-      .json({ error: "Invalid other expenses amount provided." });
+      .json({ error: "Invalid total monthly income provided." });
   }
-
-  if (!monthlySavings || monthlySavings < 0) {
-    return res.status(400).json({ error: "Invalid monthly savings provided." });
+  if (!totalSavings || totalSavings < 0) {
+    return res.status(400).json({ error: "Invalid total savings provided." });
   }
 
   const parameters = {
-    movingCost,
-    immediateCost,
+    movingAndSetupCost,
+    monthlyLivingCost,
     rent,
     securityDeposit,
-    utilities,
-    associatedCost,
-    netIncome,
-    savings,
+    totalMonthlyIncome,
+    totalSavings,
     monthsToEvaluate,
-    otherExpenses,
-    monthlySavings,
   };
 
   // Check each parameter for numeric validity
@@ -131,38 +106,28 @@ app.post("/validate", (req, res) => {
   }
 
   // Convert values to numbers and proceed with processing
-  const numMovingCost = parseFloat(movingCost);
+  const numMovingAndSetupCost = parseFloat(movingAndSetupCost);
+  const numMonthlyLivingCost = parseFloat(monthlyLivingCost);
   const numRent = parseFloat(rent);
-  const numUtilities = parseFloat(utilities);
-  const numImmediateCost = parseFloat(immediateCost);
   const numSecurityDeposit = parseFloat(securityDeposit);
-  const numNetIncome = parseFloat(netIncome);
-  const numSavings = parseFloat(savings);
+  const numTotalMonthlyIncome = parseFloat(totalMonthlyIncome);
+  const numTotalSavings = parseFloat(totalSavings);
   const numMonthsToEvaluate = parseInt(monthsToEvaluate, 10);
-  const numAssociatedCost = parseInt(associatedCost);
-  const numOtherExpenses = parseInt(otherExpenses);
-  const numMonthlySavings = parseInt(monthlySavings);
 
   try {
     // Perform calculations
-    const initialCosts = numMovingCost + numImmediateCost + numSecurityDeposit;
-    const totalMonthlyCost =
-      numRent +
-      numUtilities +
-      numOtherExpenses +
-      numMonthlySavings +
-      numAssociatedCost;
+    const initialCosts = numMovingAndSetupCost + numSecurityDeposit;
+    const totalMonthlyCost = numMonthlyLivingCost + numRent;
     const totalCostOverTime =
       initialCosts + totalMonthlyCost * numMonthsToEvaluate;
-    const affordabilityDuration = Math.floor(
-      (numSavings + numNetIncome * numMonthsToEvaluate) / totalMonthlyCost
-    );
-    const canAfford = affordabilityDuration >= numMonthsToEvaluate;
+    const totalFundsAvailable =
+      numTotalSavings + numTotalMonthlyIncome * numMonthsToEvaluate;
+    const canAfford = totalFundsAvailable >= totalCostOverTime;
     const additionalMonthlyIncomeNeeded = canAfford
       ? 0
       : (
-          totalMonthlyCost -
-          (numNetIncome + numSavings / numMonthsToEvaluate)
+          (totalCostOverTime - numTotalSavings) / numMonthsToEvaluate -
+          numTotalMonthlyIncome
         ).toFixed(2);
 
     // Prepare the response
@@ -170,8 +135,8 @@ app.post("/validate", (req, res) => {
       initialCosts,
       totalMonthlyCost,
       totalCostOverTime,
-      affordabilityDuration,
-      canAfford: affordabilityDuration >= monthsToEvaluate,
+      affordabilityDuration: Math.floor(totalFundsAvailable / totalMonthlyCost),
+      canAfford,
       additionalMonthlyIncomeNeeded,
     };
 
