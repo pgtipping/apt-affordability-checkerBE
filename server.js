@@ -10,20 +10,20 @@ const app = express();
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://apartment-affordability-checker.vercel.app/",
+];
 // Configure CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow only this origin to access
+    origin: allowedOrigins, // Allow only this origin to access
   })
 );
 
 const { Pool } = pg;
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  connectionString: process.env.POSTGRES_URL,
 });
 
 function isNumeric(value) {
