@@ -12,12 +12,22 @@ app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://apartment-affordability-checker.vercel.app/",
+  "http://localhost:3001",
+  "https://apartment-affordability-checker.vercel.app",
+  "https://apartment-cost-analyzer-backend.vercel.app",
 ];
+
 // Configure CORS
 app.use(
   cors({
-    origin: allowedOrigins, // Allow only this origin to access
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
 
