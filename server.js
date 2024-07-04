@@ -14,7 +14,6 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://apartment-affordability-checker.vercel.app",
-  "https://apartment-cost-analyzer-backend.vercel.app",
 ];
 
 // Configure CORS
@@ -35,6 +34,9 @@ const { Pool } = pg;
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
+
+console.log("Connecting to database at:", process.env.POSTGRES_URL);
+export default pool;
 
 function isNumeric(value) {
   return !isNaN(parseFloat(value)) && isFinite(value);
