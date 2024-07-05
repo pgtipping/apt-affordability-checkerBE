@@ -15,6 +15,7 @@ const allowedOrigins = [
   "http://localhost:3001",
   "https://apartment-affordability-checker.vercel.app",
   "https://apartment-affordability-checker-pascal-georges-projects.vercel.app",
+  "https://apartment-cost-analyzer-backend.vercel.app",
 ];
 
 // Configure CORS
