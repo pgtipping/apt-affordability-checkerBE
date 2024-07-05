@@ -21,17 +21,8 @@ const allowedOrigins = [
 // Configure CORS
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified origin.";
-        return callback(new Error(msg), false);
-      }
-    },
-    credentials: true,
+    origin: "*", // Allow all origins temporarily for debugging
+    credentials: true, // Allow credentials
   })
 );
 
