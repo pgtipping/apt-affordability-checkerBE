@@ -13,9 +13,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware to parse JSON bodies
-app.use(express.json());
-
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -34,6 +31,9 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
+
+// Middleware to parse JSON bodies
+app.use(express.json());
 
 const { Pool } = pg;
 const pool = new Pool({
