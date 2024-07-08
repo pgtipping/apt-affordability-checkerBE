@@ -7,6 +7,12 @@ import { body, validationResult } from "express-validator";
 
 const app = express();
 
+// Middleware to log requests
+app.use((req, res, next) => {
+  console.log("Request received:", req.method, req.url);
+  next();
+});
+
 // Middleware to parse JSON bodies
 app.use(express.json());
 
@@ -21,8 +27,11 @@ const allowedOrigins = [
 // Configure CORS
 app.use(
   cors({
-    origin: "*", // Allow all origins temporarily for debugging
-    credentials: true, // Allow credentials
+    origin: function (origin, callback) {
+      callback(null, true);
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 
