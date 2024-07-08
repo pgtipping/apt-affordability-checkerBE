@@ -9,7 +9,19 @@ const app = express();
 
 // Middleware to log requests
 app.use((req, res, next) => {
-  console.log("Request received:", req.method, req.url);
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://apartment-affordability-checker.vercel.app"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 });
 
@@ -24,11 +36,8 @@ const allowedOrigins = [
 // Configure CORS
 app.use(
   cors({
-    origin: function (origin, callback) {
-      callback(null, true);
-    },
+    origin: "https://apartment-affordability-checker.vercel.app",
     credentials: true,
-    optionsSuccessStatus: 200,
   })
 );
 
