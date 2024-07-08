@@ -25,6 +25,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/test-cors", (req, res) => {
+  res.json({ message: "CORS is working" });
+});
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
