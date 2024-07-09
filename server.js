@@ -11,7 +11,7 @@ const app = express();
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://apartment-affordability-checker.vercel.app"
+    allowedOrigins.includes(req.headers.origin) ? req.headers.origin : ""
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -22,7 +22,11 @@ app.use((req, res, next) => {
     "X-Requested-With,content-type"
   );
   res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
+  if (req.method === "OPTIONS") {
+    res.sendStatus(204); // No Content
+  } else {
+    next();
+  }
 });
 
 app.get("/test-cors", (req, res) => {
@@ -40,7 +44,13 @@ const allowedOrigins = [
 // Configure CORS
 app.use(
   cors({
-    origin: "https://apartment-affordability-checker.vercel.app",
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
