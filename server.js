@@ -7,32 +7,7 @@ import { body, validationResult } from "express-validator";
 
 const app = express();
 
-// Middleware to log requests
-app.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    allowedOrigins.includes(req.headers.origin) ? req.headers.origin : ""
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  if (req.method === "OPTIONS") {
-    res.sendStatus(204); // No Content
-  } else {
-    next();
-  }
-});
-
-app.get("/test-cors", (req, res) => {
-  res.json({ message: "CORS is working" });
-});
-
+// Define allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
