@@ -7,18 +7,6 @@ import { body, validationResult } from "express-validator";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 // Middleware to handle CORS
 app.use((req, res, next) => {
   const allowedOrigins = [
@@ -48,6 +36,19 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
