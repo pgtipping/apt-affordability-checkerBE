@@ -1,34 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import cors from "cors";
 import pg from "pg";
 import { body, validationResult } from "express-validator";
 
 const app = express();
-
-// Middleware to handle CORS
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "https://apartment-affordability-checker.vercel.app",
-  "https://apartment-affordability-checker-pascal-georges-projects.vercel.app",
-  "https://apartment-cost-analyzer-backend.vercel.app",
-];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
