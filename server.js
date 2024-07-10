@@ -8,34 +8,14 @@ import { body, validationResult } from "express-validator";
 const app = express();
 
 // Middleware to handle CORS
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://apartment-affordability-checker.vercel.app",
-    "https://apartment-affordability-checker-pascal-georges-projects.vercel.app",
-    "https://apartment-cost-analyzer-backend.vercel.app",
-  ];
-  const origin = req.headers.origin;
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With, content-type, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204); // No Content
-  }
-  next();
-});
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://apartment-affordability-checker.vercel.app",
+  "https://apartment-affordability-checker-pascal-georges-projects.vercel.app",
+  "https://apartment-cost-analyzer-backend.vercel.app",
+];
 
 app.use(
   cors({
